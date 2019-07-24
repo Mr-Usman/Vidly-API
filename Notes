@@ -1,0 +1,90 @@
+// Trade off between query performance vs consistency
+
+// Using Refernces (Normalization)  --> consistency
+
+let author = {
+    name : 'Usman Rehmat'
+}
+
+let course = {
+    author : 'id'
+}
+
+// Using Embedded Documents (Denormalization) -> performance
+
+let course = {
+    author: {
+        name: 'Usman Rehmat'
+    }
+}
+
+// hybird approach
+let author = {
+    name: 'Usman Rehmat'
+    // 50 other properties
+}
+
+let course = {
+    author: {
+        id : 'ref',
+        name : "Usman Rehmat"
+    }
+}
+
+// Mongoose Population 
+
+const mongoose = require('mongoose');
+
+mongoose.connect('mongodb://localhost/playground')
+  .then(() => console.log('Connected to MongoDB...'))
+  .catch(err => console.error('Could not connect to MongoDB...', err));
+
+const Author = mongoose.model('Author', new mongoose.Schema({
+  name: String,
+  bio: String,
+  website: String
+}));
+
+const Course = mongoose.model('Course', new mongoose.Schema({
+  name: String,
+  author : {
+    type : mongoose.Schema.Types.ObjectId,
+    ref :  'Author'
+  }
+}));
+
+async function createAuthor(name, bio, website) { 
+  const author = new Author({
+    name, 
+    bio, 
+    website 
+  });
+
+  const result = await author.save();
+  console.log(result);
+}
+
+async function createCourse(name, author) {
+  const course = new Course({
+    name, 
+    author
+  }); 
+  
+  const result = await course.save();
+  console.log(result);
+}
+
+async function listCourses() { 
+  const courses = await Course
+    .find()
+    .populate('author', 'name -_id') // author will include name and exclude id
+    .populate('category', 'name') // we can populate two or more models
+    .select({name : 1, author : 1});
+  console.log(courses);
+}
+
+createAuthor('Mosh', 'My bio', 'My Website');
+
+// createCourse('Node Course', 'authorId')
+
+// listCourses();
