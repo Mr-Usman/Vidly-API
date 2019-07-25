@@ -21,5 +21,6 @@ function validateGenre(genre) {
 
 module.exports = {
     Genre,
-    validate : validateGenre
+    validate : validateGenre,
+    genreSchema : GenreSchema
 }
