@@ -4,6 +4,7 @@ const app = express();
 const genresRouter = require('./routes/genresRouter')
 const customerRouter = require("./routes/customersRouter")
 const movieRouter = require("./routes/movieRouter")
+const rentalRouter = require("./models/rental")
 
 mongoose.connect('mongodb://localhost/vidly')
     .then(() => console.log('connected to mongodb ...'))
@@ -14,6 +15,7 @@ app.use(express.json());
 app.use('/api/genres', genresRouter)
 app.use('/api/customers', customerRouter)
 app.use('/api/movies', movieRouter)
+app.use('/api/rental', rentalRouter)
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => console.log(`Listening on port ${port}...`));
