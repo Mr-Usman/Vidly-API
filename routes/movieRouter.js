@@ -3,7 +3,7 @@ const router = express.Router();
 const { Movie, validate } = require('../models/movie')
 const { Genre } = require('../models/genre')
 
-router.get('/', (req,res) => {
+router.get('/', async (req,res) => {
     const movies = await Movie.find().sort({ name: 1 });
     res.send(movies)
 })
@@ -14,7 +14,7 @@ router.post('/', async (req,res) => {
     
     const genre = await Genre.findById(req.body.genreId)
     
-    let movie = new Movie({
+    let movie = new Movie({ 
         title : req.body.title,
         genre : {
             _id : genre._id,
